@@ -162,6 +162,19 @@ input[type="password"] {
   cursor: pointer;
 }
 
+#error-message{
+  border:#3D3D3D solid 1px;
+  width: 379px;
+  height: 51px;
+  margin:28px auto;
+  line-height: 51px;
+  font-size: 14px;
+  font-family: 'Syne', sans-serif;
+}
+.hidden {
+  display: none;
+}
+
 /* Designer d’espace  */
 .designer-text {
   color: #1D6154;
