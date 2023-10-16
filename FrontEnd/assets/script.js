@@ -1,19 +1,27 @@
-// login
-const loginLink = document.getElementById('login-link');
-loginLink.addEventListener('click', ()=>{
-    location.href = './login.html';
-})
-
+document.addEventListener('DOMContentLoaded', function () {
 // Get login status
-const email = localStorage.getItem('email');
+// const email = localStorage.getItem('email');
+const userId = localStorage.getItem('userId');
+const loginLink = document.getElementById('login-link');
 
-// logout
-if(email) {
-    loginLink.textContent = 'logout';
-    loginLink.addEventListener('click', function(){
-    localStorage.removeItem('email');
-    localStorage.removeItem('password');
-    location.href = './index.html';
-    });
-} else{
-}
+// Check if user is logged in
+
+if (userId) {
+    loginLink.textContent = 'logout'; //   login to logout
+  }
+  
+
+loginLink.addEventListener('click', function () {
+    if (userId) {
+      // if click logout 
+      localStorage.removeItem('userId');
+      localStorage.removeItem('token');
+      location.href = './index.html'; // redirection to homepage
+    } else {
+      
+      location.href = './login.html';
+    }
+  });
+
+
+});
