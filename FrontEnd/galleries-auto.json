@@ -1,11 +1,11 @@
 [
-        {
-            "id": 1,
-            "image": "assets/images/abajour-tahina.png",
-            "figcaption": "Abat-jour Tahina",
-            "name": "Objets"
+    {
+        "id": 1,
+        "image": "assets/images/abajour-tahina.png",
+        "figcaption": "Abat-jour Tahina",
+        "name": "Objets"
 
-        },
+    },
     {
         "id": 2,
         "image": "assets/images/appartement-paris-v.png",

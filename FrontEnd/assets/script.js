@@ -13,7 +13,7 @@ const gallery = document.querySelector('.gallery');
       displayAllProjects(projectsData);
     } else {
       // 否则，根据选定的类别筛选项目
-      const filteredProjects = projectsData.filter((project) => project.name === category);
+      const filteredProjects = projectsData.filter((project) => project.category.name === category);
       displayFilteredProjects(filteredProjects);
     }
   }
@@ -21,18 +21,22 @@ const gallery = document.querySelector('.gallery');
   // 创建并显示筛选后的项目
   function displayFilteredProjects(filteredProjects) {
     gallery.innerHTML = '';
-    filteredProjects.forEach((project) => {
-      const figure = document.createElement('figure');
-      const image = document.createElement('img');
-      image.src = project.image;
-      image.alt = project.figcaption;
-      const figcaption = document.createElement('figcaption');
-      figcaption.textContent = project.figcaption;
+    if (filteredProjects.length > 0) {
+      filteredProjects.forEach((project) => {
+        const figure = document.createElement('figure');
+        const image = document.createElement('img');
+        image.src = project.imageUrl;
+        image.alt = project.title;
+        const figcaption = document.createElement('figcaption');
+        figcaption.textContent = project.title;
 
-      figure.appendChild(image);
-      figure.appendChild(figcaption);
-      gallery.appendChild(figure);
-    });
+        figure.appendChild(image);
+        figure.appendChild(figcaption);
+        gallery.appendChild(figure);
+      });
+    } else {
+      gallery.innerHTML = '没有匹配的项目。';
+    }
   }
 
   // 直接显示所有项目
@@ -41,10 +45,10 @@ const gallery = document.querySelector('.gallery');
     data.forEach((project) => {
       const figure = document.createElement('figure');
       const image = document.createElement('img');
-      image.src = project.image;
-      image.alt = project.figcaption;
+      image.src = project.imageUrl;
+      image.alt = project.title;
       const figcaption = document.createElement('figcaption');
-      figcaption.textContent = project.figcaption;
+      figcaption.textContent = project.title;
 
       figure.appendChild(image);
       figure.appendChild(figcaption);
@@ -56,7 +60,7 @@ const gallery = document.querySelector('.gallery');
   filterButtons.forEach((button) => {
     button.addEventListener('click', function () {
       const selectedCategory = this.id;
-      console.log('选定的类别：', selectedCategory);
+      console.log('Selected category:', selectedCategory);
 
       // 检查是否已经选中相同类别，如果是则返回
       if (selectedCategory === currentCategory) {
@@ -84,16 +88,16 @@ const gallery = document.querySelector('.gallery');
   loadData();
 
   function loadData() {
-    fetch('galleries-auto.json')
+    fetch('http://localhost:5678/api/works')
       .then((response) => response.json())
       .then((data) => {
         projectsData = data; // 将数据存储到全局变量
-        console.log('加载的数据：', projectsData);
+        console.log('Loaded data:', projectsData);
         // 页面加载后显示所有项目
         displayAllProjects(projectsData);
       })
       .catch((error) => {
-        console.error('加载数据失败：', error);
+        console.error('Failed to load data:', error);
       });
   }
 
@@ -104,6 +108,7 @@ const userId = localStorage.getItem('userId');
 const loginLink = document.getElementById('login-link');
 
 // Check if user is logged in
+console.log('User ID:', userId);
 
 if (userId) {
     loginLink.textContent = 'logout'; //   login to logout
@@ -113,20 +118,23 @@ if (userId) {
 loginLink.addEventListener('click', function () {
     if (userId) {
       // if click logout 
+      console.log('User clicked "logout"');
       localStorage.removeItem('userId');
       localStorage.removeItem('token');
       location.href = './index.html'; // redirection to homepage
     } else {
-      
+      console.log('User clicked "login"');
       location.href = './login.html';
     }
   });
 
 
+ 
 
 
 
 
-  
 
 });
+
+
