@@ -83,52 +83,60 @@ buttonContainer.addEventListener('click', (event) => {
 //  加载类别数据
 loadCategories();
 
-function loadCategories() {
-  fetch('http://localhost:5678/api/categories')
-    .then((response) => response.json())
-    .then((data) => {
-      categories = data; // 将类别数据存储到全局变量
+async function loadCategories() {
+  try {
+    const response = await fetch('http://localhost:5678/api/categories');
+    if (response.ok) {
+      const data = await response.json();
+      categories = data;  // 将类别数据存储到全局变量
       console.log('Loaded categories:', categories);
-
       // 创建其他类别按钮并添加到页面
       createCategoryButtons(categories);
-
-      //  加载项目数据
-      loadData();
-    })
-    .catch((error) => {
-      console.error('Failed to load categories:', error);
-    });
+      await loadData(); //  加载项目数据
+    } else {
+      throw new Error('Failed to fetch categories');
+    }
+  } catch (error) {
+    console.error('Failed to load categories:', error);
+  }
 }
 
 // 创建其他类别筛选按钮并添加到页面
 function createCategoryButtons(categories) {
+  buttonContainer.innerHTML = ''; //先清空
+   // 添加 "Tous" 按钮
+   const tousButton = document.createElement('button');
+   tousButton.id = 'tous';
+   tousButton.className = 'filter-button';
+   tousButton.textContent = 'Tous';
+   buttonContainer.appendChild(tousButton);
   // 遍历其他类别数据并创建按钮
   categories.forEach((category) => {
     const button = document.createElement('button');
     button.id = category.name;
     button.className = 'filter-button';
     button.textContent = category.name;
-
     buttonContainer.appendChild(button);
   });
+ 
 }
-
-// 加载项目数据
-function loadData() {
-  fetch('http://localhost:5678/api/works')
-    .then((response) => response.json())
-    .then((data) => {
-      projectsData = data; // 将项目数据存储到全局变量
-      console.log('Loaded data:', projectsData);
-
-      // 页面加载后显示所有项目
-      displayAllProjects(projectsData);
-    })
-    .catch((error) => {
+  // 加载项目数据
+  async function loadData() {
+    try {
+      const response = await fetch('http://localhost:5678/api/works');
+      if (response.ok) {
+        const data = await response.json();
+        projectsData = data; // 将项目数据存储到全局变量
+        console.log('Loaded data:', projectsData);
+        // 页面加载后显示所有项目
+        displayAllProjects(projectsData);
+      } else {
+        throw new Error('Failed to fetch data');
+      }
+    } catch (error) {
       console.error('Failed to load data:', error);
-    });
-}
+    }
+  }
 
 
 
@@ -136,13 +144,28 @@ function loadData() {
   // const email = localStorage.getItem('email');
   const userId = localStorage.getItem('userId');
   const loginLink = document.getElementById('login-link');
+  const topBar = document.querySelector('.top-bar'); 
+  const topBarIcon = document.querySelector('.top-bar .fa-pen-to-square');
+  const topBarText = document.querySelector('.modifier'); 
+  const mesProjetsIcon = document.querySelector('#portfolio .fa-pen-to-square'); 
+  const mesProjetsText = document.querySelector('#portfolio .tool-text'); 
   // Check if user is logged in
   console.log('User ID:', userId);
 
   if (userId) {
-      loginLink.textContent = 'logout'; //   login to logout
+    loginLink.textContent = 'logout'; //   login to logout
+    if (topBar) {
+      topBar.style.display = 'block'; 
+      topBarIcon.style.display = 'block'; 
+      topBarText.style.display = 'block'; 
+      mesProjetsIcon.style.display = 'block'; 
+      mesProjetsText.style.display = 'block'; 
+    }
+    // 隐藏筛选按钮，因为用户已登录
+    buttonContainer.style.display = 'none';
     }
     
+
   loginLink.addEventListener('click', function () {
       if (userId) {
         // if click logout 
@@ -158,6 +181,16 @@ function loadData() {
 
 
  
+ 
+
+
+
+
+
+
+
+
+
 
 
 });
