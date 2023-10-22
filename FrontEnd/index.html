@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
   <body>
-        <!-- top-bar -->
+    <!-- top-bar -->
     <div class="top-bar">
       <i class="fa-regular fa-pen-to-square"></i>
       <span class="modifier">Mode édition</span>
@@ -64,7 +64,7 @@
       <section id="portfolio">
         <h2>Mes Projets</h2>
         <!-- icon -->
-        <i class="fa-regular fa-pen-to-square"></i>
+        <i class="fa-regular fa-pen-to-square" id="edit-button"></i>
         <span class="tool-text">modifier</span>
         <div class="button-container">
           <button id="tous" class="filter-button">Tous</button>
@@ -170,12 +170,87 @@
         </ul>
       </nav>
     </footer>
-    <div class="overlay-class" id="overlay-id" >
+    <!-- Project management module -->
+    <div class="overlay-class" id="overlay-id">
       <div class="popup">
-        <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark" id="close-popup"></i>
         <h2>Galerie photo</h2>
         <div class="image-container" id="image-container">
-            <!-- get photo par api -->
+          <!-- get photo par api -->
+          <div class="image-block">
+            <img src="assets/images/abajour-tahina.png" alt="Abajour Tahina" />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/appartement-paris-v.png"
+              alt="Appartement Paris V"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/restaurant-sushisen-londres.png"
+              alt="Restaurant Sushisen - Londres"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/la-balisiere.png"
+              alt="Villa “La Balisiere” - Port Louis"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/structures-thermopolis.png"
+              alt="Structures Thermopolis"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/appartement-paris-x.png"
+              alt="Appartement Paris X"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/le-coteau-cassis.png"
+              alt="Pavillon “Le coteau” - Cassis"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/villa-ferneze.png"
+              alt="Villa Ferneze - Isola d’Elba"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/appartement-paris-xviii.png"
+              alt="Appartement Paris XVIII"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/bar-lullaby-paris.png"
+              alt="Bar “Lullaby” - Paris"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+          <div class="image-block">
+            <img
+              src="assets/images/hotel-first-arte-new-delhi.png"
+              alt="Hotel First Arte - New Delhi"
+            />
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
         </div>
         <div class="divider"></div>
         <button class="add-photo-button">Ajouter une photo</button>
