@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const overlay = document.getElementById("overlay-id");
   const popup = overlay.querySelector(".popup");
   const projetsEditIcon = document.getElementById("edit-button");
-  const closeIcon = document.getElementById("close-popup");
+  const closeIcon = document.querySelector(".close-popup");
 
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
@@ -273,7 +273,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   getAndRenderImages();
 
-//end of popup//
+//end of first popup//
+
+
+// 获取按钮和两个弹窗元素
+const addPhotoButton = document.querySelector(".add-photo-button");
+const firstPopup = document.getElementById("first-popup");
+const secondPopup = document.getElementById("second-popup");
+
+addPhotoButton.addEventListener("click", () => {
+  firstPopup.style.display = "none";
+  console.log("First popup hidden");
+  secondPopup.style.display = "block";
+  console.log("Second popup shown"); 
+});
 
 
 

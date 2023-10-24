@@ -406,7 +406,7 @@ footer nav ul {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 25px 9px;
-  grid-auto-rows: 105px; 
+  grid-auto-rows: 105px;
 }
 
 .image-block {
@@ -445,7 +445,8 @@ footer nav ul {
   margin: 67.3px auto auto;
 }
 
-.add-photo-button {
+.add-photo-button,
+.valider-button {
   width: 237px;
   height: 36px;
   border-radius: 60px;
@@ -455,8 +456,142 @@ footer nav ul {
 
   color: #fff;
   text-align: center;
-  font-family: Syne;
+  font-family: "Syne";
   font-size: 14px;
   font-weight: 700;
   border-style: none;
+}
+
+/* popup-add */
+.popup-add {
+  display: none; 
+}
+
+.popup-add .fa-arrow-left {
+  position: absolute;
+  top: 26px;
+  left: 30px;
+}
+
+.add-image-container {
+  margin: 46px 105px auto;
+  width: 26.25rem;
+}
+
+.upload-block {
+  width: 420px;
+  height: 169px;
+  background: #e8f1f6;
+  border-radius: 3px;
+  text-align: center;
+  position: relative;
+}
+
+#image-icon {
+  font-size: 76px;
+  color: #b9c5cc;
+
+  top: 13px;
+  left: 172px;
+  position: absolute;
+}
+
+#file-input {
+  display: none;
+}
+
+.custom-file-label {
+  width: 173px;
+  height: 36px;
+  border-radius: 50px;
+  background: #cbd6dc;
+  border: none;
+
+  cursor: pointer;
+  color: #306685;
+  text-align: center;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 36px;
+
+  position: absolute;
+  top: 95px;
+  left: 124px;
+}
+
+.upload-block p {
+  text-align: center;
+  font-family: "Work Sans";
+  font-size: 10px;
+  font-weight: 400;
+  color: #444;
+
+  position: absolute;
+  top: 138px;
+  left: 163px;
+}
+
+.title-block, 
+.category-block {
+  color: #3d3d3d;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-weight: 500;
+}
+.title-block{
+  margin-top: 30px;
+}
+
+#image-title, 
+#image-category {
+  width: 420px;
+  height: 51px;
+  background: #FFF;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+  margin-top: 10px;
+  margin-bottom: 21px;
+  border-style: none;
+  
+}
+
+select {
+  /* appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none; */
+  position: relative;
+  cursor: pointer;
+}
+
+select::after {
+  content: "";
+  cursor: pointer;
+
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+
+}
+
+.empty-option {
+  display: none;
+}
+.popup-add .divider{
+  margin-top: 26px;
+}
+
+.valider-button {
+  text-align: center;
+  width: 237px;
+  height: 36px;
+  border-radius: 60px;
+  background: #A7A7A7;
+  color: #FFF;
+}
+
+.valider-button {
+  margin: 32px 198px auto;
+  cursor: pointer;
 }
