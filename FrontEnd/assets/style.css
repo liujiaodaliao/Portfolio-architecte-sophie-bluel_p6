@@ -377,6 +377,9 @@ footer nav ul {
   transform: translate(-50%, -50%);
   z-index: 1000;
 }
+/* #first-popup{
+  display: none;
+} */
 
 .popup i {
   width: 24px;
@@ -462,12 +465,12 @@ footer nav ul {
   border-style: none;
 }
 
-/* popup-add */
-.popup-add {
+/* second popup */
+/* #second-popup {
   display: none; 
-}
+} */
 
-.popup-add .fa-arrow-left {
+#second-popup .fa-arrow-left {
   position: absolute;
   top: 26px;
   left: 30px;
@@ -489,6 +492,8 @@ footer nav ul {
 
 #image-icon {
   font-size: 76px;
+  width: 76px;
+  height: 76px;
   color: #b9c5cc;
 
   top: 13px;

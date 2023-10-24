@@ -182,24 +182,84 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // popup//
   // Get the overlay and element 获取弹窗和遮罩层元素
+  const projetsEditIcon = document.getElementById("edit-button");
   const overlay = document.getElementById("overlay-id");
   const popup = overlay.querySelector(".popup");
-  const projetsEditIcon = document.getElementById("edit-button");
-  const closeIcon = document.querySelector(".close-popup");
+  // Get the add button and two pop-up elements
+  const addPhotoButton = document.querySelector(".add-photo-button");
+  const firstPopup = document.getElementById("first-popup");
+  const secondPopup = document.getElementById("second-popup");
+  const closeFirstPopupIcon = firstPopup.querySelector(".close-popup");
+  const closeSecondPopupIcon = secondPopup.querySelector(".close-popup");
+  const backButton = document.getElementById("back-button");
+
+  // 2 popups hidden by default
+  // firstPopup.style.display = "none";
+  // secondPopup.style.display = "none";
 
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
     overlay.style.display = "block";
+    firstPopup.style.display = "block";
+    secondPopup.style.display = "none";
     console.log("Edit icon clicked");
   });
 
-  // Hide the popup when the close icon is clicked 点击关闭图标时隐藏弹窗
-  closeIcon.addEventListener("click", () => {
+  firstPopup.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+  // Hide the popup when the close icon/overlay is clicked 点击关闭/遮盖层时隐藏弹窗
+  closeFirstPopupIcon.addEventListener("click", () => {
     console.log("Close icon clicked");
     overlay.style.display = "none";
+    firstPopup.style.display = "none";
     window.location.href = './index.html'
   });
 
+  secondPopup.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });  
+  closeSecondPopupIcon.addEventListener("click", () => {
+    console.log("Close icon clicked");
+    overlay.style.display = "none";
+    secondPopup.style.display = "none";
+    window.location.href = './index.html'
+});
+
+  //  event listener that returns the first pop-up window
+  backButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+    secondPopup.style.display = "none";
+    firstPopup.style.display = "block";
+    console.log("Second popup hidden, First popup shown");
+  });
+
+  //click button ajouter photo Switch from the first pop-up to the second
+  addPhotoButton.addEventListener("click", (e) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    firstPopup.style.display = "none";
+    secondPopup.style.display = "block";
+    console.log("First popup hidden, Second popup shown");
+  });
+
+// overlay
+overlay.addEventListener("click", (e) => {
+  // get element clicked
+  const target = e.target;
+
+  // Check whether the clicked element in the pop-up判断点击的元素是否是弹窗内的元素
+  const isInsideFirstPopup = firstPopup.contains(target);
+  const isInsideSecondPopup = secondPopup.contains(target);
+
+  // If the clicked element is not in the pop-up close 如果点击的元素不在弹窗内，关闭弹窗
+  if (!isInsideFirstPopup && !isInsideSecondPopup) {
+    firstPopup.style.display = "none";
+    secondPopup.style.display = "none";
+    overlay.style.display = "none";
+  }
+  console.log("overlay clicked");
+});
 
   // Create an image block 创建图片盒子
   function createImageBlock(image) {
@@ -275,18 +335,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //end of first popup//
 
-
-// 获取按钮和两个弹窗元素
-const addPhotoButton = document.querySelector(".add-photo-button");
-const firstPopup = document.getElementById("first-popup");
-const secondPopup = document.getElementById("second-popup");
-
-addPhotoButton.addEventListener("click", () => {
-  firstPopup.style.display = "none";
-  console.log("First popup hidden");
-  secondPopup.style.display = "block";
-  console.log("Second popup shown"); 
-});
 
 
 

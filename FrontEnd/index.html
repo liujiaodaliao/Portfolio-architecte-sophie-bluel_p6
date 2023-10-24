@@ -167,7 +167,7 @@
         </ul>
       </nav>
     </footer>
-    <!-- Project management module -->
+    <!-- first popup Project management module -->
     <div class="overlay-class" id="overlay-id">
       <div class="popup" id="first-popup">
         <i class="fa-solid fa-xmark close-popup"></i>
@@ -250,11 +250,10 @@
           </div>
         </div>
         <div class="divider"></div>
-        <button class="add-photo-button">Ajouter une photo</button>
+        <button type="button" class="add-photo-button">Ajouter une photo</button>
       </div>
-      <!-- new form for adding a project -->
-
-      <div class="popup popup-add" id="second-popup">
+      <!-- second popup for adding a project -->
+      <div class="popup" id="second-popup">
         <i class="fa-solid fa-arrow-left" id="back-button"></i>
         <i class="fa-solid fa-xmark close-popup"></i>
         <h2>Ajout photo</h2>
@@ -265,11 +264,11 @@
               <input
                 type="file"
                 id="file-input"
-                accept="image/*"
+                accept=".jpg, .png"
               />
               <label
                 for="file-input"
-                class="custom-file-label">+ Ajouter photo</label
+                class="custom-file-label" >+ Ajouter photo</label
               >
               <p>jpg, png : 4mo max</p>
             </div>
