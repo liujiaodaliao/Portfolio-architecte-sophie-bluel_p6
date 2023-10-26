@@ -258,13 +258,14 @@
         <i class="fa-solid fa-xmark close-popup"></i>
         <h2>Ajout photo</h2>
         <div class="add-image-container" id="add-image-container">
-          <form id="upload-form">
+          <form id="upload-form" enctype="multipart/form-data">
             <div class="upload-block">
               <i class="fa-regular fa-image" id="image-icon"></i>
               <input
                 type="file"
                 id="file-input"
                 accept=".jpg, .png"
+                name="image"
               />
               <label
                 for="file-input"
@@ -274,11 +275,11 @@
             </div>
             <div class="title-block">
               <p>Titre</p>
-              <input type="text" id="image-title" />
+              <input type="text" id="image-title" name="title" />
             </div>
             <div class="category-block">
               <p>Catégorie</p>
-              <select id="image-category">
+              <select id="image-category" name="category">
                 <option value="" disabled selected class="empty-option"></option>
                 <option value="Objets">Objets</option>
                 <option value="Appartements">Appartements</option>

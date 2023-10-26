@@ -270,7 +270,7 @@ li:hover {
 .button-container {
   display: flex;
   justify-content: center;
-  margin: 51px auto;
+  margin: 3.188rem auto;
 }
 
 .filter-button {
@@ -382,12 +382,12 @@ footer nav ul {
 } */
 
 .popup i {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   position: absolute;
   top: 1.625rem;
   right: 1.875rem;
-  font-size: 24px;
+  font-size: 1.5rem;
   text-align: center;
   cursor: pointer;
 }
@@ -396,26 +396,26 @@ footer nav ul {
   color: #000;
   text-align: center;
   font-family: "Work Sans";
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: 400;
-  margin-top: 60px;
+  margin-top: 3.75rem;
 }
 
 .image-container {
-  margin: 46px 105px auto;
+  margin: 2.875rem 6.563rem auto;
   width: 26.25rem;
   height: 22.856rem;
 
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 25px 9px;
-  grid-auto-rows: 105px;
+  gap: 1.563rem 0.563rem;
+  grid-auto-rows: 6.563rem;
 }
 
 .image-block {
   position: relative;
-  width: 77px;
-  height: 105px;
+  width: 4.813rem;
+  height: 6.563rem;
 }
 
 .image-block img {
@@ -426,41 +426,41 @@ footer nav ul {
 
 .image-block i {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 0.375rem;
+  right: 0.375rem;
   background: #000;
   border-radius: 10%;
   padding: 4px;
   color: #fff;
   cursor: pointer;
   z-index: 1;
-  width: 9px;
-  height: 9px;
-  font-size: 9px;
+  width: 0.563rem;
+  height: 0.563rem;
+  font-size: 0.563rem;
   text-align: center;
-  line-height: 9px;
+  line-height: 0.563rem;
 }
 
 .divider {
-  width: 420px;
+  width: 26.25rem;
   height: 1px;
   background-color: #b3b3b3;
-  margin: 67.3px auto auto;
+  margin: 4.206rem auto auto;
 }
 
 .add-photo-button,
 .valider-button {
-  width: 237px;
-  height: 36px;
-  border-radius: 60px;
+  width: 14.813rem;
+  height: 2.25rem;
+  border-radius: 3.75rem;
   background: #1d6154;
-  margin: 38px 198px auto;
+  margin: 2.375rem 12.375rem auto;
   cursor: pointer;
 
   color: #fff;
   text-align: center;
   font-family: "Syne";
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   border-style: none;
 }
@@ -472,32 +472,34 @@ footer nav ul {
 
 #second-popup .fa-arrow-left {
   position: absolute;
-  top: 26px;
-  left: 30px;
+  top: 1.625rem;
+  left: 1.875rem;
 }
 
 .add-image-container {
-  margin: 46px 105px auto;
+  margin: 2.875rem 6.563rem auto;
   width: 26.25rem;
 }
 
 .upload-block {
-  width: 420px;
-  height: 169px;
+  width: 26.25rem;
+  height: 10.563rem;
   background: #e8f1f6;
   border-radius: 3px;
   text-align: center;
   position: relative;
+
+  overflow: hidden;
 }
 
 #image-icon {
-  font-size: 76px;
-  width: 76px;
-  height: 76px;
+  font-size: 4.75rem;
+  width: 4.75rem;
+  height: 4.75rem;
   color: #b9c5cc;
 
-  top: 13px;
-  left: 172px;
+  top: 0.813rem;
+  left: 10.75rem;
   position: absolute;
 }
 
@@ -506,9 +508,9 @@ footer nav ul {
 }
 
 .custom-file-label {
-  width: 173px;
-  height: 36px;
-  border-radius: 50px;
+  width: 10.75rem;
+  height: 2.25rem;
+  border-radius: 3.125rem;
   background: #cbd6dc;
   border: none;
 
@@ -516,14 +518,14 @@ footer nav ul {
   color: #306685;
   text-align: center;
   font-family: "Work Sans";
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   text-align: center;
-  line-height: 36px;
+  line-height: 2.25rem;
 
   position: absolute;
-  top: 95px;
-  left: 124px;
+  top: 5.938rem;
+  left: 7.75rem;
 }
 
 .upload-block p {
@@ -536,6 +538,19 @@ footer nav ul {
   position: absolute;
   top: 138px;
   left: 163px;
+}
+
+.upload-block img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 .title-block, 

@@ -193,10 +193,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeSecondPopupIcon = secondPopup.querySelector(".close-popup");
   const backButton = document.getElementById("back-button");
 
-  // 2 popups hidden by default
-  // firstPopup.style.display = "none";
-  // secondPopup.style.display = "none";
-
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
     overlay.style.display = "block";
@@ -213,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     firstPopup.style.display = "none";
-    window.location.href = './index.html'
+    // window.location.href = './index.html'
   });
 
   secondPopup.addEventListener("click", (e) => {
@@ -223,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     secondPopup.style.display = "none";
-    window.location.href = './index.html'
+    // window.location.href = './index.html'
 });
 
   //  event listener that returns the first pop-up window
@@ -287,9 +283,20 @@ overlay.addEventListener("click", (e) => {
 
   // Delete an image 删除图片
   async function deleteImage(imageId) {
+
+    // get token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('User is not authenticated. Cannot delete image.');
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5678/api/works/${imageId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -335,6 +342,119 @@ overlay.addEventListener("click", (e) => {
 
 //end of first popup//
 
+
+// Add project form, API interaction 添加项目表单，api/works post交互
+const uploadForm = document.getElementById('upload-form');
+const fileInput = document.getElementById('file-input');
+const imageTitleInput = document.getElementById('image-title');
+const imageCategorySelect = document.getElementById('image-category');
+const emptyOption = document.querySelector('.empty-option');
+const validerButton = document.querySelector('.valider-button');
+const imageThumbnail = document.createElement('img');
+const imageIcon = document.getElementById('image-icon');
+const customFileLabel = document.querySelector('.custom-file-label');
+const paragraph = document.querySelector('.upload-block p');
+const uploadBlock = document.querySelector('.upload-block');
+
+// 在 "change" 事件监听器中触发弹窗显示
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) {
+    imageIcon.style.display = 'none';
+    fileInput.style.display = 'none';
+    customFileLabel.style.display = 'none';
+    paragraph.style.display = 'none';
+    // display imageThumbnail 显示图片缩略图
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageThumbnail.src = e.target.result;
+      imageThumbnail.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    uploadBlock.appendChild(imageThumbnail);
+
+    // pop-up window display
+    overlay.style.display = 'block';
+    secondPopup.style.display = 'block';
+
+    console.log('File input change event triggered.');
+  } else {
+    // Hide image thumbnails
+    imageThumbnail.style.display = 'none';
+  }
+});
+
+
+
+// add "Valider" event listner
+validerButton.addEventListener('click', async () => {
+  const imageTitle = imageTitleInput.value;
+  const imageCategoryName = imageCategorySelect.value;
+  console.log(imageTitle, imageCategoryName);
+
+  // Verify that all required fields are filled in 验证是否所有必填字段都已填写
+  if (!imageTitle || !imageCategoryName || !fileInput.files[0]) {
+    validerButton.style.backgroundColor = 'red'; 
+    console.log('Validation failed: Please fill in all required fields.');
+    return;
+  }else {
+    validerButton.style.backgroundColor = '#1D6154';
+  }
+
+  // get token
+  const token = localStorage.getItem('token');
+  // Build request headers
+  const headers = new Headers();
+  headers.append('Authorization', `Bearer ${token}`);
+  // request body  FormData 
+  const formData = new FormData();
+  formData.append('image', fileInput.files[0]);
+  formData.append('title', imageTitle);
+
+  // Create a category mapping object
+  const categoryMap = {
+    'Objets': 1,
+    'Appartements': 2,
+    'Hotels & restaurants': 3,
+  };
+  const imageCategoryId = categoryMap[imageCategoryName];
+  formData.append('category', imageCategoryId);
+
+  // Send a POST request to the server to add a new image
+  try {
+    const response = await fetch('http://localhost:5678/api/works', {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); // 处理成功的响应数据
+      // 重置按钮样式
+      // validerButton.style.backgroundColor = '#1D6154';
+
+      // 清空表单字段
+      fileInput.value = '';
+      imageTitleInput.value = '';
+      imageCategorySelect.value = '';
+      imageThumbnail.style.display = 'none';
+
+      // 关闭弹窗
+      overlay.style.display = 'none';
+      secondPopup.style.display = 'none';
+
+      // 刷新项目库以显示新图片
+      // 你可以通过重新获取并渲染项目数据来实现这一点
+      getAndRenderImages();
+      console.log('Image added successfully.');
+    } else {
+      console.error('Failed to add image.');
+    }
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+});
 
 
 
