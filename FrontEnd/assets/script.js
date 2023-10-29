@@ -20,37 +20,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-function displayFilteredProjects(filteredProjects) {
-  gallery.innerHTML = '';
-  if (filteredProjects.length > 0) {
-    filteredProjects.forEach((project) => {
+  function displayFilteredProjects(filteredProjects) {
+    gallery.innerHTML = '';
+    if (filteredProjects.length > 0) {
+      filteredProjects.forEach((project) => {
+        const figure = createProjectFigure(project);
+        gallery.appendChild(figure);
+      });
+    } else {
+      gallery.innerHTML = 'No matching items';
+    }
+  }
+
+  function displayAllProjects(data) {
+    gallery.innerHTML = '';
+    data.forEach((project) => {
       const figure = createProjectFigure(project);
       gallery.appendChild(figure);
     });
-  } else {
-    gallery.innerHTML = 'No matching items';
   }
-}
 
-function displayAllProjects(data) {
-  gallery.innerHTML = '';
-  data.forEach((project) => {
-    const figure = createProjectFigure(project);
-    gallery.appendChild(figure);
-  });
-}
-
-function createProjectFigure(project) {
-  const figure = document.createElement('figure');
-  const image = document.createElement('img');
-  image.src = project.imageUrl;
-  image.alt = project.title;
-  const figcaption = document.createElement('figcaption');
-  figcaption.textContent = project.title;
-  figure.appendChild(image);
-  figure.appendChild(figcaption);
-  return figure;
-}
+  function createProjectFigure(project) {
+    const figure = document.createElement('figure');
+    const image = document.createElement('img');
+    image.src = project.imageUrl;
+    image.alt = project.title;
+    const figcaption = document.createElement('figcaption');
+    figcaption.textContent = project.title;
+    figure.appendChild(image);
+    figure.appendChild(figcaption);
+    return figure;
+  }
 
   //  Create filter buttons (add event listeners) 创建筛选按钮（添加事件监听器）
   buttonContainer.addEventListener('click', (event) => {
@@ -70,7 +70,7 @@ function createProjectFigure(project) {
       currentCategory = selectedCategory;
       // Add an active state to the current button 给当前按钮添加激活状态
       event.target.classList.add('active');
-      // Call the filter projects function and pass the selected category 调用筛选项目函数，并传递所选的类别
+      // Call the filter projects function 调用筛选项目函数，并传递所选的类别
       filterProjects(currentCategory);
     }
   });
@@ -85,7 +85,7 @@ function createProjectFigure(project) {
         const data = await response.json();
         categories = data;  // Store category data in a global variable 将类别数据存储到全局变量
         console.log('Loaded categories:', categories);
-        // Create filter buttons for other categories and add them to the page 创建其他类别按钮并添加到页面
+        // Create buttons for other categories to the page 创建其他类别按钮并添加到页面
         createCategoryButtons(categories);
         await loadData(); //   Load project data 加载项目数据
       } else {
@@ -96,9 +96,9 @@ function createProjectFigure(project) {
     }
   }
 
-  // Create filter buttons for other categories and add them to the page 创建其他类别筛选按钮并添加到页面
+  // Create buttons for other categories and add them to the page 创建其他类别筛选按钮并添加到页面
   function createCategoryButtons(categories) {
-    buttonContainer.innerHTML = ''; //先清空
+    buttonContainer.innerHTML = ''; //clear 
     const tousButton = document.createElement('button');
     tousButton.id = 'tous';
     tousButton.className = 'filter-button';
@@ -112,7 +112,6 @@ function createProjectFigure(project) {
       button.textContent = category.name;
       buttonContainer.appendChild(button);
     });
-
   }
   // Load project data
   async function loadData() {
@@ -133,7 +132,6 @@ function createProjectFigure(project) {
   }
 
   // Get login status
-  // const email = localStorage.getItem('email');
   const userId = localStorage.getItem('userId');
   const loginLink = document.getElementById('login-link');
   const topBar = document.querySelector('.top-bar');
@@ -157,7 +155,6 @@ function createProjectFigure(project) {
     buttonContainer.style.display = 'none';
   }
 
-
   loginLink.addEventListener('click', function () {
     if (userId) {
       // if click logout 
@@ -172,8 +169,7 @@ function createProjectFigure(project) {
   });
   //end of filter//
 
-  // popup//
-  // Get the overlay and element 获取弹窗和遮罩层元素
+  // the first popup//
   const projetsEditIcon = document.getElementById("edit-button");
   const overlay = document.getElementById("overlay-id");
   const addPhotoButton = document.querySelector(".add-photo-button");
@@ -234,7 +230,7 @@ function createProjectFigure(project) {
       overlay.style.display = "none";
       console.log("overlay clicked");
     }
-    
+
   });
 
   // Create an image block 创建图片盒子
@@ -295,7 +291,6 @@ function createProjectFigure(project) {
     }
   }
 
-
   // Get all image data and render it in the container 获取所有图片数据并渲染到盒子中
   async function getAndRenderImages() {
     try {
@@ -323,11 +318,9 @@ function createProjectFigure(project) {
   //end of first popup//
 
   // Add project form, API interaction 添加项目表单，api/works post交互
-  const uploadForm = document.getElementById('upload-form');
   const fileInput = document.getElementById('file-input');
   const imageTitleInput = document.getElementById('image-title');
   const imageCategorySelect = document.getElementById('image-category');
-  const emptyOption = document.querySelector('.empty-option');
   const validerButton = document.querySelector('.valider-button');
   const imageThumbnail = document.createElement('img');
   const imageIcon = document.getElementById('image-icon');
@@ -335,14 +328,13 @@ function createProjectFigure(project) {
   const paragraph = document.querySelector('.upload-block p');
   const uploadBlock = document.querySelector('.upload-block');
 
-  // 在 "change" 事件监听器中触发弹窗显示
+  // add event change to display image thumbnails in the interface
   fileInput.addEventListener('change', () => {
     if (fileInput.files[0]) {
       imageIcon.style.display = 'none';
       fileInput.style.display = 'none';
       customFileLabel.style.display = 'none';
       paragraph.style.display = 'none';
-      // display imageThumbnail 显示图片缩略图
       const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -352,18 +344,15 @@ function createProjectFigure(project) {
       reader.readAsDataURL(file);
       uploadBlock.appendChild(imageThumbnail);
 
-      // pop-up window display
       overlay.style.display = 'block';
       secondPopup.style.display = 'block';
-
       console.log('File input change event triggered.');
     } else {
-      // Hide image thumbnails
       imageThumbnail.style.display = 'none';
     }
   });
 
-  // 创建一个函数，用于构建请求头
+  // builds the request body headers，构建请求头
   function buildHeaders() {
     const token = localStorage.getItem('token');
     const headers = new Headers();
@@ -371,7 +360,7 @@ function createProjectFigure(project) {
     return headers;
   }
 
-  // 创建一个函数，用于构建请求体
+  // builds the request body，构建请求体
   function buildFormData() {
     const formData = new FormData();
     formData.append('image', fileInput.files[0]);
@@ -386,7 +375,7 @@ function createProjectFigure(project) {
     return formData;
   }
 
-  // 创建一个函数，用于发送 POST 请求并处理响应
+  // sendPostRequest，发送 POST 请求并处理响应
   async function sendPostRequest(formData, headers) {
     try {
       const response = await fetch('http://localhost:5678/api/works', {
@@ -407,20 +396,20 @@ function createProjectFigure(project) {
     }
   }
 
-  // 用于处理成功上传图片后的操作的函数
+  // function for after successfully uploading an image用于处理成功上传图片后的操作的函数
   function handleSuccessfulUpload() {
-    // 清空表单字段
+    // clear form fields清空表单字段
     fileInput.value = '';
     imageTitleInput.value = '';
     imageCategorySelect.value = '';
     imageThumbnail.style.display = 'none';
-    // 关闭弹窗
+    // colse the popup 关闭弹窗
     overlay.style.display = 'none';
-    // 刷新项目库以显示新图片
+    // Refresh the project 刷新项目库以显示新图片
     getAndRenderImages();
     console.log('Image added successfully.');
   }
-  // 创建一个函数，用于验证用户输入
+  // Create a function that validates user input
   function validateUserInput() {
     const errorMessage = document.querySelector('.error-message');
     let imageTitle = imageTitleInput.value;
@@ -428,7 +417,7 @@ function createProjectFigure(project) {
     console.log('imageTitle:', imageTitle);
     console.log('imageCategoryName:', imageCategoryName);
     console.log('fileInput.files[0]:', fileInput.files[0]);
-    // 验证用户输入是否完整，如果有错误，返回 false，否则返回 true
+    // Verify user input is complete验证用户输入是否完整
     if (!imageTitle || !imageCategoryName || !fileInput.files[0]) {
       errorMessage.style.display = 'block';
       console.log('Validation failed: Please fill in all required fields.');
@@ -439,9 +428,9 @@ function createProjectFigure(project) {
     }
   }
 
-  // 在 valider 按钮的事件处理程序中调用这些函数
+  // Call these functions in the event 调用这些函数
   validerButton.addEventListener('click', async () => {
-    validerButton.style.backgroundColor = '#1D6154';  // 重置按钮样式
+    validerButton.style.backgroundColor = '#1D6154';
     imageTitle = imageTitleInput.value;
     imageCategoryName = imageCategorySelect.value;
     if (validateUserInput()) {
