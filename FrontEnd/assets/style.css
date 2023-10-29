@@ -598,6 +598,11 @@ select::after {
 .empty-option {
   display: none;
 }
+
+.error-message{
+  color: red; 
+  display: none;
+}
 .popup-add .divider{
   margin-top: 26px;
 }
