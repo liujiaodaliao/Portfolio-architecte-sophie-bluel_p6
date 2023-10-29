@@ -193,6 +193,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeSecondPopupIcon = secondPopup.querySelector(".close-popup");
   const backButton = document.getElementById("back-button");
 
+  // 在关闭弹窗时或上传新图片后触发刷新数据
+function refreshImageList() {
+  // 调用获取和渲染图片的函数
+  getAndRenderImages();
+}
+
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
     overlay.style.display = "block";
@@ -209,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     firstPopup.style.display = "none";
-    // window.location.href = './index.html'
+    refreshImageList();
   });
 
   secondPopup.addEventListener("click", (e) => {
@@ -219,7 +225,6 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     secondPopup.style.display = "none";
-    // window.location.href = './index.html'
 });
 
   //  event listener that returns the first pop-up window
@@ -269,7 +274,8 @@ overlay.addEventListener("click", (e) => {
 
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('fa-solid', 'fa-trash-can');
-    deleteIcon.addEventListener('click', () => {
+    deleteIcon.addEventListener('click', (event) => {
+      event.preventDefault();
       deleteImage(image.id);
       //  Remove the image from the interface 从界面中删除图片
       imageBlock.remove();
@@ -432,7 +438,7 @@ validerButton.addEventListener('click', async () => {
       const data = await response.json();
       console.log(data); // 处理成功的响应数据
       // 重置按钮样式
-      // validerButton.style.backgroundColor = '#1D6154';
+      validerButton.style.backgroundColor = '#1D6154';
 
       // 清空表单字段
       fileInput.value = '';
@@ -446,7 +452,7 @@ validerButton.addEventListener('click', async () => {
 
       // 刷新项目库以显示新图片
       // 你可以通过重新获取并渲染项目数据来实现这一点
-      getAndRenderImages();
+      refreshImageList();
       console.log('Image added successfully.');
     } else {
       console.error('Failed to add image.');
