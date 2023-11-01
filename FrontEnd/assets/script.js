@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-  //filter//
+  //////////////filter//////////////////////////////
   // Get the button elements 获取按钮元素
   const gallery = document.querySelector('.gallery');
   const buttonContainer = document.querySelector('.button-container');
@@ -130,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Failed to load data:', error);
     }
   }
-
   // Get login status
   const userId = localStorage.getItem('userId');
   const loginLink = document.getElementById('login-link');
@@ -169,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   //end of filter//
 
-  // the first popup//
+  //////////// the first popup deletion////////////////////////////////////////////
   const projetsEditIcon = document.getElementById("edit-button");
   const overlay = document.getElementById("overlay-id");
   const addPhotoButton = document.querySelector(".add-photo-button");
@@ -178,6 +176,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeFirstPopupIcon = firstPopup.querySelector(".close-popup");
   const closeSecondPopupIcon = secondPopup.querySelector(".close-popup");
   const backButton = document.getElementById("back-button");
+
+  firstPopup.style.display = 'none';
+  secondPopup.style.display = 'none';
 
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
@@ -205,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
     e.stopPropagation();
     secondPopup.style.display = "none";
     firstPopup.style.display = "block";
+    overlay.style.display = "block";
     console.log("Second popup hidden, First popup shown");
   });
 
@@ -218,19 +220,16 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // overlay
-  overlay.addEventListener("click", (e) => {
-    // get element clicked
-    const target = e.target;
-    // Check whether the clicked element in the pop-up判断点击的元素是否是弹窗内的元素
-    const isInsideFirstPopup = firstPopup.contains(target);
-    const isInsideSecondPopup = secondPopup.contains(target);
+  let shouldClosePopup = true; // 新增一个标志，初始值为 true
 
-    // If the clicked element is not in the pop-up close 如果点击的元素不在弹窗内，关闭弹窗
-    if (!isInsideFirstPopup && !isInsideSecondPopup) {
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
       overlay.style.display = "none";
+      firstPopup.style.display = "none";
+      secondPopup.style.display = "none";
+      shouldClosePopup = true;
       console.log("overlay clicked");
     }
-
   });
 
   // Create an image block 创建图片盒子
@@ -245,11 +244,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const deleteIcon = document.createElement('i');
     deleteIcon.classList.add('fa-solid', 'fa-trash-can');
+
     deleteIcon.addEventListener('click', (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      shouldClosePopup = false; // 在删除图像时不关闭弹窗
+      console.log('Delete icon clicked. shouldClosePopup:', shouldClosePopup);
       deleteImage(image.id);
-      //  Remove the image from the interface 
-      imageBlock.remove();
+      if (imageBlock) {
+        imageBlock.remove();//  Remove the image from the interface 
+        getAndRenderImages();
+        console.log('Image deleted. Check if it affects the firstPopup.');
+      }
+      event.stopImmediatePropagation();
     });
 
     imageBlock.appendChild(imgElement);
@@ -279,10 +286,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(`Image with ID ${imageId} deleted successfully.`);
         // Remove the image block from the DOM
         const imageBlock = document.querySelector(`.image-block[data-image-id="${imageId}"]`);
-        getAndRenderImages();
         if (imageBlock) {
           imageBlock.remove();
+          console.log('Image block removed from the DOM.');
+          // getAndRenderImages();
+          // console.log('getAndRenderImages called.');
         }
+        shouldClosePopup = false;
       } else {
         console.error(`Failed to delete image with ID ${imageId}.`);
       }
@@ -306,6 +316,9 @@ document.addEventListener('DOMContentLoaded', function () {
           const imageBlock = createImageBlock(image);
           imageContainer.appendChild(imageBlock);
         });
+        // overlay.style.display = 'block';
+        // firstPopup.style.display = 'block';
+        shouldClosePopup = false;
       } else {
         console.error('Failed to fetch images.');
       }
@@ -317,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
   getAndRenderImages();
   //end of first popup//
 
+  //////////// second popup ajout///////////////////////////////////////////////////
   // Add project form, API interaction 添加项目表单，api/works post交互
   const fileInput = document.getElementById('file-input');
   const imageTitleInput = document.getElementById('image-title');
@@ -404,10 +418,13 @@ document.addEventListener('DOMContentLoaded', function () {
     imageCategorySelect.value = '';
     imageThumbnail.style.display = 'none';
     // colse the popup 关闭弹窗
-    overlay.style.display = 'none';
-    // Refresh the project 刷新项目库以显示新图片
+    // Check if the first popup is open, and open it
+    if (firstPopup.style.display === 'block') {
+      overlay.style.display = 'block';
+    }
     getAndRenderImages();
     console.log('Image added successfully.');
+
   }
   // Create a function that validates user input
   function validateUserInput() {

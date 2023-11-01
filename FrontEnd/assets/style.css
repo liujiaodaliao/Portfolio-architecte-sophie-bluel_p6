@@ -377,9 +377,11 @@ footer nav ul {
   transform: translate(-50%, -50%);
   z-index: 1000;
 }
-/* #first-popup{
+
+#first-popup, 
+#second-popup{
   display: none;
-} */
+}
 
 .popup i {
   width: 1.5rem;
@@ -465,10 +467,9 @@ footer nav ul {
   border-style: none;
 }
 
-/* second popup */
-/* #second-popup {
-  display: none; 
-} */
+.valider-button:hover{
+  background: #1d6154;
+}
 
 #second-popup .fa-arrow-left {
   position: absolute;
