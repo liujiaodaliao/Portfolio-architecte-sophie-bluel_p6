@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function loadCategories() {
     try {
       const response = await fetch('http://localhost:5678/api/categories');
+      console.log('Response status code (loadCategories):', response.status);
       if (response.ok) {
         const data = await response.json();
         categories = data;  // Store category data in a global variable 将类别数据存储到全局变量
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function loadData() {
     try {
       const response = await fetch('http://localhost:5678/api/works');
+      console.log('Response status code (loadData):', response.status);
       if (response.ok) {
         const data = await response.json();
         projectsData = data; // Store project data in a global variable 将项目数据存储到全局变量
@@ -222,15 +224,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // overlay
   let shouldClosePopup = true; // 新增一个标志，初始值为 true
 
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-      overlay.style.display = "none";
-      firstPopup.style.display = "none";
-      secondPopup.style.display = "none";
-      shouldClosePopup = true;
-      console.log("overlay clicked");
-    }
-  });
+  // overlay.addEventListener("click", (e) => {
+  //   if (e.target === overlay) {
+  //     overlay.style.display = "none";
+  //     firstPopup.style.display = "none";
+  //     secondPopup.style.display = "none";
+  //     shouldClosePopup = true;
+  //     console.log("overlay clicked");
+  //   }
+  // });
 
   // Create an image block 创建图片盒子
   function createImageBlock(image) {
@@ -281,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
           'Authorization': `Bearer ${token}`,
         },
       });
-
+      console.log('Response status code (deleteImage):', response.status);
       if (response.ok) {
         console.log(`Image with ID ${imageId} deleted successfully.`);
         // Remove the image block from the DOM
@@ -305,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
   async function getAndRenderImages() {
     try {
       const response = await fetch('http://localhost:5678/api/works');
+      console.log('Response status code (getAndRenderImages):', response.status);
       if (response.ok) {
         const imagesData = await response.json();
         console.log('Images data from API:', imagesData);
@@ -316,8 +319,6 @@ document.addEventListener('DOMContentLoaded', function () {
           const imageBlock = createImageBlock(image);
           imageContainer.appendChild(imageBlock);
         });
-        // overlay.style.display = 'block';
-        // firstPopup.style.display = 'block';
         shouldClosePopup = false;
       } else {
         console.error('Failed to fetch images.');
@@ -397,16 +398,16 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: headers,
         body: formData,
       });
-
+      console.log('Response status code (sendPostRequest):', response.status);
       if (response.ok) {
         return await response.json();
       } else {
         console.error('Failed to add image.');
-        return null;
+        return "";
       }
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
-      return null;
+      return "";
     }
   }
 
@@ -446,7 +447,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Call these functions in the event 调用这些函数
-  validerButton.addEventListener('click', async () => {
+  validerButton.addEventListener('click', async (event) => {
+    event.preventDefault();
     validerButton.style.backgroundColor = '#1D6154';
     imageTitle = imageTitleInput.value;
     imageCategoryName = imageCategorySelect.value;
@@ -455,12 +457,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = buildFormData();
       const data = await sendPostRequest(formData, headers);
 
-      if (data !== null) {
+      if (data !== "") {
         handleSuccessfulUpload();
       }
     }
   });
-
 
 
 
