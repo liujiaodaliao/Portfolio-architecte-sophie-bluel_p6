@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = emailInput.value;
         const password = passwordInput.value;
         const requestBody = {
-            email: email,
-            password: password,
+            email: emailInput.value,
+            password: passwordInput.value,
         };
         // 构建请求体, 发送POST请求到后端API进行身份验证
         try {

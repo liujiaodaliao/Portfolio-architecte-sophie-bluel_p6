@@ -1,20 +1,117 @@
 document.addEventListener('DOMContentLoaded', function () {
-  //////////////filter//////////////////////////////
-  // Get the button elements 获取按钮元素
+
+  /////////////////////filter//////////////////////////////////
   const gallery = document.querySelector('.gallery');
+  const imageContainer = document.getElementById('image-container');
   const buttonContainer = document.querySelector('.button-container');
   let currentCategory = '';
-  let projectsData = [];
+  let projects = [];
   let categories = [];
+
+  // 异步获取类别数据
+  async function fetchCategories() {
+    const response = await fetch('http://localhost:5678/api/categories');
+    console.log('Response status code (fetchCategories):', response.status);
+    if (!response.ok) {
+      throw new Error('Failed to fetch categories');
+    }
+    return response.json();
+  }
+
+  // 存储类别数据到全局变量
+  function storeCategories(categoryData) {
+    categories = categoryData;  // Store category data in a global variable 将类别数据存储到全局变量
+    console.log('Loaded categories:', categories);
+  }
+
+  //主函数 异步加载类别和项目数据
+  async function loadCategories() {
+    try {
+      const categoryData = await fetchCategories();
+      storeCategories(categoryData);
+      createCategoryButtons(categories);
+      await loadProjects();
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+    }
+  }
+  loadCategories();
+  // Create buttons of categories and add them to the page 
+  //创建其他类别筛选按钮并添加到页面
+  function createCategoryButtons(categories) {
+    buttonContainer.innerHTML = ''; //clear 
+    const tousButton = document.createElement('button');
+    tousButton.id = 'tous';
+    tousButton.className = 'filter-button';
+    tousButton.textContent = 'Tous';
+    buttonContainer.appendChild(tousButton);
+    // Iterate through other category data and create buttons 
+    //遍历其他类别并创建按钮
+    categories.forEach((category) => {
+      const button = document.createElement('button');
+      button.id = category.name;
+      button.className = 'filter-button';
+      button.textContent = category.name;
+      buttonContainer.appendChild(button);
+    });
+  }
+
+  // Load project data 异步加载项目数据
+  async function fetchProjects() {
+    const response = await fetch('http://localhost:5678/api/works');
+    console.log('Response status code (fetchProjects):', response.status);
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    return response.json();
+  }
+
+  // Store project data in a global variable 将项目数据存储到全局变量
+  function storeProjects(projectData) {
+    projects = projectData;
+    console.log('Loaded projectData:', projects);
+  }
+
+  //主函数来加载主页面项目数据
+  async function loadProjects() {
+    try {
+      const projectData = await fetchProjects();
+      storeProjects(projectData);
+      displayProjectsInContainer(projects, 'gallery');
+      // displayProjectsInContainer(projects, containerType);
+    } catch (error) {
+      console.error('Failed to load projectData:', error);
+    }
+  }
+
+  buttonContainer.addEventListener('click', (event) => {
+    if (event.target.classList.contains('filter-button')) {
+      const selectedCategory = event.target.id;
+      console.log('Selected category:', selectedCategory);
+      // Check if the same category is already selected, if so, return 检查是否已经选中相同类别，如果是则返回
+      if (selectedCategory === currentCategory) {
+        return;
+      }
+      // Remove the active state from the previous button 移除上一个按钮的激活状态
+      const currentActiveButton = document.querySelector('.filter-button.active');
+      if (currentActiveButton) {
+        currentActiveButton.classList.remove('active');
+      }
+      currentCategory = selectedCategory;
+      // Add an active state to the current button 给当前按钮添加激活状态
+      event.target.classList.add('active');
+      // Call the filter projects function 调用筛选项目函数，并传递所选的类别
+      filterProjects(currentCategory);
+    }
+  });
 
   //  Filter projects 筛选项目
   function filterProjects(category) {
     if (category === 'tous') {
-      // If button "Tous"is clicked, display all projects 如果点 "Tous" 按钮，显示所有项目
-      displayAllProjects(projectsData);
+      displayProjectsInContainer(projects, 'gallery');
     } else {
       // Otherwise, filter projects based on the selected category 否则，根据选定的类别筛选项目
-      const filteredProjects = projectsData.filter((project) => project.category.name === category);
+      const filteredProjects = projects.filter((project) => project.category.name === category);
       displayFilteredProjects(filteredProjects);
     }
   }
@@ -31,106 +128,38 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function displayAllProjects(data) {
-    gallery.innerHTML = '';
-    data.forEach((project) => {
-      const figure = createProjectFigure(project);
-      gallery.appendChild(figure);
+  // render主页面时调用 gallery render弹窗时调用 imagecontainer
+  function displayProjectsInContainer(projects, containerType) {
+    const container = document.getElementById(containerType);
+    container.innerHTML = '';
+    if (!container) {
+      console.error(`Container element "${containerType}" not found.`);
+      return;
+    }
+    projects.forEach((project) => {
+      if (containerType === 'gallery') {
+        // const figure = createProjectFigure(project);
+        createProjectFigure(project);
+      } else if (containerType === 'image-container') {
+        // const imageBlock = openFirstPopup(project);
+        openFirstPopup(project);
+      }
     });
   }
 
   function createProjectFigure(project) {
     const figure = document.createElement('figure');
     const image = document.createElement('img');
+    const figcaption = document.createElement('figcaption');
     image.src = project.imageUrl;
     image.alt = project.title;
-    const figcaption = document.createElement('figcaption');
     figcaption.textContent = project.title;
     figure.appendChild(image);
     figure.appendChild(figcaption);
+    gallery.appendChild(figure);
     return figure;
   }
 
-  //  Create filter buttons (add event listeners) 创建筛选按钮（添加事件监听器）
-  buttonContainer.addEventListener('click', (event) => {
-    if (event.target.classList.contains('filter-button')) {
-      const selectedCategory = event.target.id;
-      console.log('Selected category:', selectedCategory);
-      // Check if the same category is already selected, if so, return 检查是否已经选中相同类别，如果是则返回
-      if (selectedCategory === currentCategory) {
-        return;
-      }
-      // Remove the active state from the previous button 移除上一个按钮的激活状态
-      const currentActiveButton = document.querySelector('.filter-button.active');
-      if (currentActiveButton) {
-        currentActiveButton.classList.remove('active');
-      }
-      // Update the currently selected category更新当前选中的类别
-      currentCategory = selectedCategory;
-      // Add an active state to the current button 给当前按钮添加激活状态
-      event.target.classList.add('active');
-      // Call the filter projects function 调用筛选项目函数，并传递所选的类别
-      filterProjects(currentCategory);
-    }
-  });
-
-  //  Load category data 加载类别数据
-  loadCategories();
-
-  async function loadCategories() {
-    try {
-      const response = await fetch('http://localhost:5678/api/categories');
-      console.log('Response status code (loadCategories):', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        categories = data;  // Store category data in a global variable 将类别数据存储到全局变量
-        console.log('Loaded categories:', categories);
-        // Create buttons for other categories to the page 创建其他类别按钮并添加到页面
-        createCategoryButtons(categories);
-        await loadData(); //   Load project data 加载项目数据
-      } else {
-        throw new Error('Failed to fetch categories');
-      }
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
-  }
-
-  // Create buttons for other categories and add them to the page 创建其他类别筛选按钮并添加到页面
-  function createCategoryButtons(categories) {
-    buttonContainer.innerHTML = ''; //clear 
-    const tousButton = document.createElement('button');
-    tousButton.id = 'tous';
-    tousButton.className = 'filter-button';
-    tousButton.textContent = 'Tous';
-    buttonContainer.appendChild(tousButton);
-    // Iterate through other category data and create buttons 遍历其他类别数据并创建按钮
-    categories.forEach((category) => {
-      const button = document.createElement('button');
-      button.id = category.name;
-      button.className = 'filter-button';
-      button.textContent = category.name;
-      buttonContainer.appendChild(button);
-    });
-  }
-  // Load project data
-  async function loadData() {
-    try {
-      const response = await fetch('http://localhost:5678/api/works');
-      console.log('Response status code (loadData):', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        projectsData = data; // Store project data in a global variable 将项目数据存储到全局变量
-        console.log('Loaded data:', projectsData);
-        // Display all projects on page load 页面加载后显示所有项目
-        displayAllProjects(projectsData);
-      } else {
-        throw new Error('Failed to fetch data');
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    }
-  }
   // Get login status
   const userId = localStorage.getItem('userId');
   const loginLink = document.getElementById('login-link');
@@ -151,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
       mesProjetsIcon.style.display = 'block';
       mesProjetsText.style.display = 'block';
     }
-    // 隐藏筛选按钮，因为用户已登录
     buttonContainer.style.display = 'none';
   }
 
@@ -179,15 +207,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const closeSecondPopupIcon = secondPopup.querySelector(".close-popup");
   const backButton = document.getElementById("back-button");
 
-  firstPopup.style.display = 'none';
-  secondPopup.style.display = 'none';
-
   //  Show the popup when the "projets" edit icon is clicked 点击 "projets" 编辑图标时显示弹窗
   projetsEditIcon.addEventListener("click", () => {
     overlay.style.display = "block";
     firstPopup.style.display = "block";
     secondPopup.style.display = "none";
     console.log("Edit icon clicked");
+    openFirstPopup();
   });
 
   // Hide the popup when the close icon/overlay is clicked 点击关闭/遮盖层时隐藏弹窗
@@ -195,12 +221,20 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     firstPopup.style.display = "none";
+    if (deletedProjectIds.length > 0) {
+      triggerImageDeletedEvent(deletedProjectIds);
+    }
+
   });
 
   closeSecondPopupIcon.addEventListener("click", () => {
     console.log("Close icon clicked");
     overlay.style.display = "none";
     secondPopup.style.display = "none";
+    if (deletedProjectIds.length > 0) {
+      triggerImageDeletedEvent(deletedProjectIds);
+    }
+
   });
 
   //  event listener that returns the first pop-up window
@@ -210,6 +244,11 @@ document.addEventListener('DOMContentLoaded', function () {
     firstPopup.style.display = "block";
     overlay.style.display = "block";
     console.log("Second popup hidden, First popup shown");
+    if (deletedProjectIds.length > 0) {
+      triggerImageDeletedEvent(deletedProjectIds);
+    }
+      clearForm();
+    
   });
 
   //click button ajouter photo Switch from the first pop-up to the second
@@ -222,113 +261,122 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // overlay
-  let shouldClosePopup = true; // 新增一个标志，初始值为 true
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      overlay.style.display = "none";
+      firstPopup.style.display = "none";
+      secondPopup.style.display = "none";
+      console.log("overlay clicked");
+    }
+    if (deletedProjectIds.length > 0) {
+      triggerImageDeletedEvent(deletedProjectIds);
+    }
 
-  // overlay.addEventListener("click", (e) => {
-  //   if (e.target === overlay) {
-  //     overlay.style.display = "none";
-  //     firstPopup.style.display = "none";
-  //     secondPopup.style.display = "none";
-  //     shouldClosePopup = true;
-  //     console.log("overlay clicked");
-  //   }
-  // });
+  });
 
-  // Create an image block 创建图片盒子
-  function createImageBlock(image) {
-    const imageBlock = document.createElement('div');
-    imageBlock.classList.add('image-block');
-    imageBlock.setAttribute('data-image-id', image.id);
-    // To identify images for deletion 
-    const imgElement = document.createElement('img');
-    imgElement.src = image.imageUrl;
-    imgElement.alt = image.title;
+  // 打开弹窗1时的逻辑
+  const deletedProjectIds = []; // 存储待删除的项目 ID 的数组
 
-    const deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fa-solid', 'fa-trash-can');
+  function openFirstPopup() {
+    imageContainer.innerHTML = '';
 
-    deleteIcon.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      shouldClosePopup = false; // 在删除图像时不关闭弹窗
-      console.log('Delete icon clicked. shouldClosePopup:', shouldClosePopup);
-      deleteImage(image.id);
-      if (imageBlock) {
-        imageBlock.remove();//  Remove the image from the interface 
-        getAndRenderImages();
-        console.log('Image deleted. Check if it affects the firstPopup.');
-      }
-      event.stopImmediatePropagation();
+    // 循环遍历项目数据并渲染到 'imageContainer'
+    projects.forEach((project) => {
+      const imageBlock = document.createElement('div');
+      imageBlock.className = 'image-block';
+      const imageId = project.id;
+      imageBlock.setAttribute('data-id', imageId);
+      const image = document.createElement('img');
+      image.src = project.imageUrl;
+      image.alt = project.title;
+
+      const deleteIcon = document.createElement('i');
+      deleteIcon.className = 'fa-solid fa-trash-can';
+
+      deleteIcon.addEventListener('click', () => {
+        if (imageId) {
+          deletedProjectIds.push(imageId);
+          console.log('ID de l\'image supprimée : ' + imageId);
+          removeImageBlock(imageId);
+          projects = projects.filter((project) => project.id !== imageId);
+          displayProjectsInContainer(projects, 'gallery');
+          displayProjectsInContainer(projects, 'image-container');
+        }
+      });
+      imageBlock.appendChild(image);
+      imageBlock.appendChild(deleteIcon);
+      imageContainer.appendChild(imageBlock);
+      return imageBlock;
     });
-
-    imageBlock.appendChild(imgElement);
-    imageBlock.appendChild(deleteIcon);
-
-    return imageBlock;
   }
 
-  // Delete an image 
-  async function deleteImage(imageId) {
-    // get token
+  // Remove the image block from the DOM
+  function removeImageBlock(imageId) {
+    const imageBlock = document.querySelector(`.image-block[data-id="${imageId}"]`);
+    if (imageBlock) {
+      imageBlock.remove();
+      console.log('Image block removed from the DOM.');
+    }
+  }
+
+  // 在弹窗内的删除操作成功后触发自定义事件
+  function triggerImageDeletedEvent(imageId) {
+    const event = new CustomEvent('imageDeleted', { detail: imageId });
+    window.dispatchEvent(event);
+  }
+
+  // 在主页面的JavaScript中监听删除事件
+  window.addEventListener('imageDeleted', async (event) => {
+    const deletedImageId = event.detail;
+    const token = getUserToken();
+    console.log('ID de l\'image supprimée : ' + deletedImageId);
+    if (token) {
+      // const success = await deleteImage(deletedImageId);
+      // if (success) {
+      //   loadProjects();
+      // }
+      await deleteImage(deletedImageId);
+      loadProjects();
+    }
+  });
+
+  function getUserToken() {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('User is not authenticated. Cannot delete image.');
-      return;
     }
-
-    try {
-      const response = await fetch(`http://localhost:5678/api/works/${imageId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      console.log('Response status code (deleteImage):', response.status);
-      if (response.ok) {
-        console.log(`Image with ID ${imageId} deleted successfully.`);
-        // Remove the image block from the DOM
-        const imageBlock = document.querySelector(`.image-block[data-image-id="${imageId}"]`);
-        if (imageBlock) {
-          imageBlock.remove();
-          console.log('Image block removed from the DOM.');
-          // getAndRenderImages();
-          // console.log('getAndRenderImages called.');
-        }
-        shouldClosePopup = false;
-      } else {
-        console.error(`Failed to delete image with ID ${imageId}.`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    return token;
   }
 
-  // Get all image data and render it in the container 获取所有图片数据并渲染到盒子中
-  async function getAndRenderImages() {
+  //fetch delete api
+  async function deleteImage(imageId) {
+    if (!imageId) {
+      console.error('Image ID is missing. Cannot delete image.');
+      return false;
+    }
     try {
-      const response = await fetch('http://localhost:5678/api/works');
-      console.log('Response status code (getAndRenderImages):', response.status);
-      if (response.ok) {
-        const imagesData = await response.json();
-        console.log('Images data from API:', imagesData);
-
-        const imageContainer = document.getElementById('image-container');
-        imageContainer.innerHTML = '';
-        // Render each image 
-        imagesData.forEach((image) => {
-          const imageBlock = createImageBlock(image);
-          imageContainer.appendChild(imageBlock);
+      const token = getUserToken();
+      if (token) {
+        const response = await fetch(`http://localhost:5678/api/works/${imageId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
         });
-        shouldClosePopup = false;
-      } else {
-        console.error('Failed to fetch images.');
+        console.log('Response status code (deleteImage):', response.status);
+        if (response.ok) {
+          console.log(`Image with ID ${imageId} deleted from api
+           successfully.`);
+          return true;
+        } else {
+          console.error(`Failed to delete image with ID ${imageId}.`);
+          return false;
+        }
       }
     } catch (error) {
       console.error('Error:', error);
     }
   }
-
-  getAndRenderImages();
   //end of first popup//
 
   //////////// second popup ajout///////////////////////////////////////////////////
@@ -343,100 +391,111 @@ document.addEventListener('DOMContentLoaded', function () {
   const paragraph = document.querySelector('.upload-block p');
   const uploadBlock = document.querySelector('.upload-block');
 
-  // add event change to display image thumbnails in the interface
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) {
-      imageIcon.style.display = 'none';
-      fileInput.style.display = 'none';
-      customFileLabel.style.display = 'none';
-      paragraph.style.display = 'none';
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        imageThumbnail.src = e.target.result;
-        imageThumbnail.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-      uploadBlock.appendChild(imageThumbnail);
-
-      overlay.style.display = 'block';
-      secondPopup.style.display = 'block';
-      console.log('File input change event triggered.');
-    } else {
-      imageThumbnail.style.display = 'none';
-    }
-  });
 
   // builds the request body headers，构建请求头
-  function buildHeaders() {
-    const token = localStorage.getItem('token');
-    const headers = new Headers();
-    headers.append('Authorization', `Bearer ${token}`);
-    return headers;
-  }
+  // function buildHeaders() {
+  //   const token = localStorage.getItem('token');
+  //   const headers = new Headers();
+  //   headers.append('Authorization', `Bearer ${token}`);
+  //   return headers;
+  // }
 
   // builds the request body，构建请求体
   function buildFormData() {
     const formData = new FormData();
     formData.append('image', fileInput.files[0]);
-    formData.append('title', imageTitle);
+    formData.append('title', imageTitleInput.value);
     const categoryMap = {
       'Objets': 1,
       'Appartements': 2,
       'Hotels & restaurants': 3,
     };
-    const imageCategoryId = categoryMap[imageCategoryName];
-    formData.append('category', imageCategoryId);
+    const CategoryId = categoryMap[imageCategorySelect.value];
+    formData.append('category', CategoryId);
     return formData;
   }
 
-  // sendPostRequest，发送 POST 请求并处理响应
-  async function sendPostRequest(formData, headers) {
+  async function newImage(formData) {
     try {
-      const response = await fetch('http://localhost:5678/api/works', {
-        method: 'POST',
-        headers: headers,
-        body: formData,
-      });
-      console.log('Response status code (sendPostRequest):', response.status);
-      if (response.ok) {
-        return await response.json();
-      } else {
-        console.error('Failed to add image.');
-        return "";
+      const token = getUserToken();
+      if (token) {
+        const response = await fetch('http://localhost:5678/api/works', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        console.log('Response status code (newImage):', response.status);
+        if (response.ok) {
+          // return await response.json();
+          console.log(`newImage added from api
+           successfully.`);
+          return true;
+        } else {
+          console.error('Failed to add image.');
+          return false;
+        }
       }
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
-      return "";
     }
   }
 
-  // function for after successfully uploading an image用于处理成功上传图片后的操作的函数
-  function handleSuccessfulUpload() {
-    // clear form fields清空表单字段
-    fileInput.value = '';
-    imageTitleInput.value = '';
-    imageCategorySelect.value = '';
-    imageThumbnail.style.display = 'none';
-    // colse the popup 关闭弹窗
-    // Check if the first popup is open, and open it
-    if (firstPopup.style.display === 'block') {
-      overlay.style.display = 'block';
-    }
-    getAndRenderImages();
-    console.log('Image added successfully.');
+  // Call these functions in the event 调用这些函数
+  validerButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    validerButton.style.backgroundColor = '#1D6154';
+    //////////是否可以调用创建imageblock函数（newImageData）
 
+    if (validateUserInput()) {
+      imageCategoryName = imageCategorySelect.value;
+      const newImageData = getNewImageData(imageDataURL);
+      projects.push(newImageData);
+
+      addNewImageToProjects();
+      clearForm();
+      uploadBlock.removeChild(imageThumbnail);
+      showFileInputElements();
+
+      // displayProjectsInContainer(projects, 'gallery');
+      // displayProjectsInContainer(projects, 'image-container');
+    }
+  });
+
+  function getNewImageData(imageDataURL) {
+    // const category = imageCategorySelect.value;
+    const file = fileInput.files[0];
+    const title = imageTitleInput.value;
+    const imageCategoryName = imageCategorySelect.value;
+    const categoryMap = {
+      'Objets': 1,
+      'Appartements': 2,
+      'Hotels & restaurants': 3,
+    };
+    const category = {
+      id: categoryMap[imageCategoryName], 
+      name: imageCategorySelect.value 
+    };
+
+    const newImageData = {
+      title: title,
+      imageUrl: imageDataURL,
+      category: category
+    };
+    return newImageData;
   }
+
   // Create a function that validates user input
   function validateUserInput() {
     const errorMessage = document.querySelector('.error-message');
-    let imageTitle = imageTitleInput.value;
-    let imageCategoryName = imageCategorySelect.value;
-    console.log('imageTitle:', imageTitle);
+    const title = imageTitleInput.value;
+    const imageCategoryName = imageCategorySelect.value;
+    console.log('title:', title);
     console.log('imageCategoryName:', imageCategoryName);
     console.log('fileInput.files[0]:', fileInput.files[0]);
     // Verify user input is complete验证用户输入是否完整
-    if (!imageTitle || !imageCategoryName || !fileInput.files[0]) {
+    if (!title || !imageCategoryName || !fileInput.files[0]) {
       errorMessage.style.display = 'block';
       console.log('Validation failed: Please fill in all required fields.');
       return false;
@@ -446,24 +505,83 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Call these functions in the event 调用这些函数
-  validerButton.addEventListener('click', async (event) => {
-    event.preventDefault();
-    validerButton.style.backgroundColor = '#1D6154';
-    imageTitle = imageTitleInput.value;
-    imageCategoryName = imageCategorySelect.value;
-    if (validateUserInput()) {
-      const headers = buildHeaders();
-      const formData = buildFormData();
-      const data = await sendPostRequest(formData, headers);
-
-      if (data !== "") {
-        handleSuccessfulUpload();
-      }
+  // add event change to display image thumbnails in the interface为文件输入添加事件监听器
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (file) {
+      hideFileInputElements();
+      displayThumbnailImage(file);
+      // showOverlayAndPopup();
+    } else {
+      uploadBlock.removeChild(imageThumbnail);
     }
   });
 
+  // clear form fields用于处理成功上传图片后的操作的函数
+  function clearForm() {
+    fileInput.value = null;
+    imageTitleInput.value = '';
+    imageCategorySelect.value = '';
+    imageThumbnail.style.display = 'none';
+  }
 
+  function addNewImageToProjects(newImageData) {
+    projects.push(newImageData);
+  }
+
+  // 隐藏文件输入相关元素
+  function hideFileInputElements() {
+    imageIcon.style.display = 'none';
+    // fileInput.style.display = 'none';
+    customFileLabel.style.display = 'none';
+    paragraph.style.display = 'none';
+  }
+
+  function showFileInputElements() {
+    imageIcon.style.display = 'block';
+    // fileInput.style.display = 'none';
+    customFileLabel.style.display = 'block';
+    paragraph.style.display = 'block';
+  }
+  // 显示缩略图图像
+  let imageDataURL = '';
+  function displayThumbnailImage(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageDataURL = e.target.result;
+      imageThumbnail.src = imageDataURL;
+      imageThumbnail.alt = imageTitleInput.value
+      imageThumbnail.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+    uploadBlock.appendChild(imageThumbnail);
+  }
+
+  // 在弹窗内的添加操作成功后触发自定义事件
+  function triggerImageAddedEvent() {
+    const event = new CustomEvent('imageAdded', {
+      detail: {
+        fileInput: fileInput.files[0], // 图像文件
+        title: imageTitleInput.value, // 图像标题
+        imageCategoryName: imageCategorySelect.value, // 图像类别
+      },
+    });
+    window.dispatchEvent(event);
+  }
+
+  // 在主页面的JavaScript中监听添加事件
+  window.addEventListener('imageAdded', async (event) => {
+    const formData = buildFormData(); // 获取要上传的图像数据
+    const token = getUserToken();
+    if (token) {
+      const newData = await newImage(formData);
+      if (newData) {
+        loadProjects(newData);
+        console.log('Newdata:', newData);
+        // openFirstPopup(newData); //此处需要加这一步吗？有空测试下
+      }
+    }
+  });
 
 
 
