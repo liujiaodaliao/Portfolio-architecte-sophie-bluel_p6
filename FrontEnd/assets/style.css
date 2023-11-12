@@ -208,10 +208,17 @@ nav li {
   font-size: 1.2em;
 }
 
-li:hover {
+li:hover, 
+li a:hover {
   color: #b1663c;
   cursor: pointer;
 }
+
+nav li a {
+  text-decoration: none;
+  color: #000;
+}
+
 #introduction {
   display: flex;
   align-items: center;
